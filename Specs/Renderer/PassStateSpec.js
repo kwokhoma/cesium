@@ -9,5 +9,8 @@ describe('Renderer/PassState', function() {
         expect(passState.framebuffer).not.toBeDefined();
         expect(passState.blendingEnabled).not.toBeDefined();
         expect(passState.scissorTest).not.toBeDefined();
+        expect(passState.viewport).not.toBeDefined();
+        expect(passState.depthMask).not.toBeDefined();
+        expect(passState.depthFunction).not.toBeDefined();
     });
 });

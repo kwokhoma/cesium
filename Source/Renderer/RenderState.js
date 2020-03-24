@@ -526,14 +526,15 @@ import freezeRenderState from './freezeRenderState.js';
         gl.depthRange(depthRange.near, depthRange.far);
     }
 
-    function applyDepthTest(gl, renderState) {
+    function applyDepthTest(gl, renderState, passState) {
         var depthTest = renderState.depthTest;
         var enabled = depthTest.enabled;
 
         enableOrDisable(gl, gl.DEPTH_TEST, enabled);
 
         if (enabled) {
-            gl.depthFunc(depthTest.func);
+            var depthFunction = defaultValue(passState.depthFunction, depthTest.func);
+            gl.depthFunc(depthFunction);
         }
     }
 
@@ -542,8 +543,9 @@ import freezeRenderState from './freezeRenderState.js';
         gl.colorMask(colorMask.red, colorMask.green, colorMask.blue, colorMask.alpha);
     }
 
-    function applyDepthMask(gl, renderState) {
-        gl.depthMask(renderState.depthMask);
+    function applyDepthMask(gl, renderState, passState) {
+        var depthMask = defaultValue(passState.depthMask, renderState.depthMask);
+        gl.depthMask(depthMask);
     }
 
     function applyStencilMask(gl, renderState) {
@@ -633,9 +635,9 @@ import freezeRenderState from './freezeRenderState.js';
         applyLineWidth(gl, renderState);
         applyPolygonOffset(gl, renderState);
         applyDepthRange(gl, renderState);
-        applyDepthTest(gl, renderState);
+        applyDepthTest(gl, renderState, passState);
         applyColorMask(gl, renderState);
-        applyDepthMask(gl, renderState);
+        applyDepthMask(gl, renderState, passState);
         applyStencilMask(gl, renderState);
         applyStencilTest(gl, renderState);
         applySampleCoverage(gl, renderState);
@@ -726,7 +728,7 @@ import freezeRenderState from './freezeRenderState.js';
 
             var len = funcs.length;
             for (var i = 0; i < len; ++i) {
-                funcs[i](gl, renderState);
+                funcs[i](gl, renderState, passState);
             }
         }
 

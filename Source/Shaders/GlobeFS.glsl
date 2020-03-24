@@ -383,6 +383,10 @@ void main()
     fogColor *= darken;
 #endif
 
+#ifdef TRANSCLUCENT
+    fogColor = gl_FrontFacing ? fogColor : finalColor.rgb; // TODO check on mac
+#endif
+
 #ifdef HDR
     const float modifier = 0.15;
     finalColor = vec4(czm_fog(v_distance, finalColor.rgb, fogColor, modifier), finalColor.a);
@@ -437,6 +441,10 @@ void main()
 #ifdef HDR
     // Some tweaking to make HDR look better
     groundAtmosphereColor = czm_saturation(groundAtmosphereColor, 1.6);
+#endif
+
+#ifdef TRANSCLUCENT
+    fade = gl_FrontFacing ? fade : 0.0; // TODO check on mac
 #endif
 
     finalColor = vec4(mix(finalColor.rgb, groundAtmosphereColor, fade), finalColor.a);

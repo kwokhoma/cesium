@@ -53,5 +53,27 @@
          * @default undefined
          */
         this.viewport = undefined;
+
+        /**
+         * When defined, this overrides the depth mask property of a {@link DrawCommand}'s render state.
+         * <p>
+         * When this is <code>undefined</code>, the {@link DrawCommand}'s property is used.
+         * </p>
+         *
+         * @type {Boolean}
+         * @default undefined
+         */
+        this.depthMask = undefined;
+
+        /**
+         * When defined, this overrides the depth function property of a {@link DrawCommand}'s render state.
+         * <p>
+         * When this is <code>undefined</code>, the {@link DrawCommand}'s property is used.
+         * </p>
+         *
+         * @type {DepthFunction}
+         * @default undefined
+         */
+        this.depthFunction = undefined;
     }
 export default PassState;

@@ -2303,7 +2303,7 @@ import View from './View.js';
             var length = frustumCommands.indices[Pass.GLOBE];
 
             if (globeTranslucent) {
-                globeTranslucency.executeGlobeCommands(commands, length, clearGlobeDepth, scene._cameraUnderground, scene._hdr, executeCommand, view.viewport, scene, context, passState);
+                globeTranslucency.executeGlobeCommands(commands, length, scene._cameraUnderground, scene.globe.translucencyMode, executeCommand, scene, context, passState);
             } else {
                 for (j = 0; j < length; ++j) {
                     executeCommand(commands[j], scene, context, passState);
@@ -2324,7 +2324,7 @@ import View from './View.js';
             length = frustumCommands.indices[Pass.TERRAIN_CLASSIFICATION];
 
             if (globeTranslucent) {
-                globeTranslucency.executeGlobeClassificationCommands(commands, length, executeCommand, scene, context, passState);
+                globeTranslucency.executeGlobeClassificationCommands(frustumCommands, scene._cameraUnderground, scene.globe.translucencyMode, executeCommand, scene, context, passState);
             } else {
                 for (j = 0; j < length; ++j) {
                     executeCommand(commands[j], scene, context, passState);
@@ -2475,14 +2475,14 @@ import View from './View.js';
             us.updatePass(Pass.TRANSLUCENT);
             commands = frustumCommands.commands[Pass.TRANSLUCENT];
             commands.length = frustumCommands.indices[Pass.TRANSLUCENT];
-            if (globeTranslucent) {
-                var classificationCommands = frustumCommands.commands[Pass.TERRAIN_CLASSIFICATION];
-                var classificationCommandsLength = frustumCommands.indices[Pass.TERRAIN_CLASSIFICATION];
-                var globeCommandsLength = frustumCommands.indices[Pass.GLOBE];
-                globeTranslucency.executeTranslucentCommands(commands, commands.length, classificationCommands, classificationCommandsLength, globeCommandsLength, executeTranslucentCommands, executeCommand, environmentState.useOIT, scene, context, invertClassification, passState);
-            } else {
+            // if (globeTranslucent) {
+            //     var classificationCommands = frustumCommands.commands[Pass.TERRAIN_CLASSIFICATION];
+            //     var classificationCommandsLength = frustumCommands.indices[Pass.TERRAIN_CLASSIFICATION];
+            //     var globeCommandsLength = frustumCommands.indices[Pass.GLOBE];
+            //     globeTranslucency.executeTranslucentCommands(commands, commands.length, classificationCommands, classificationCommandsLength, globeCommandsLength, executeTranslucentCommands, executeCommand, environmentState.useOIT, scene, context, invertClassification, passState);
+            // } else {
                 executeTranslucentCommands(scene, executeCommand, passState, commands, invertClassification, undefined);
-            }
+            // }
 
             if (context.depthTexture && scene.useDepthPicking && (environmentState.useGlobeDepthFramebuffer || renderTranslucentDepthForPick)) {
                 // PERFORMANCE_IDEA: Use MRT to avoid the extra copy.
@@ -3190,7 +3190,7 @@ import View from './View.js';
         }
 
         if (frameState.globeTranslucent) {
-            view.globeTranslucency.execute(context, passState);
+            //view.globeTranslucency.execute(context, passState);
         }
 
         if (usePostProcess) {
@@ -3388,6 +3388,8 @@ import View from './View.js';
         passState.blendingEnabled = undefined;
         passState.scissorTest = undefined;
         passState.viewport = BoundingRectangle.clone(viewport, passState.viewport);
+        passState.depthMask = undefined;
+        passState.depthFunction = undefined;
 
         if (defined(scene.globe)) {
             scene.globe.beginFrame(frameState);
